@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	bloomfilter "github.com/alovn/go-bloomfilter"
 	"github.com/go-redis/redis/v8"
+	bloomfilter "github.com/splashing-atom/go-bloomfilter"
 )
 
 func main() {

@@ -1,7 +1,7 @@
 /*
 A simple and high-performance Bloom filter written in golang.
 
-import bloomfilter "github.com/alovn/go-bloomfilter"
+import bloomfilter "github.com/splashing-atom/go-bloomfilter"
 
 MemoryBloomFilter:
 

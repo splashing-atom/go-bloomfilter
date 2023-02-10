@@ -1,4 +1,4 @@
-module github.com/alovn/go-bloomfilter
+module github.com/splashing-atom/go-bloomfilter
 
 go 1.16
 

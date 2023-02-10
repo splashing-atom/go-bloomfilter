@@ -43,7 +43,7 @@ func (filter *redisBloomFilter) PutCtx(ctx context.Context, b []byte) error {
 		val := f(b)
 		bucketIdx := val % filter.bucketCount //array index
 		idx2 := val % filter.bucketMaxLen     //bit index
-		pipe.SetBit(ctx, fmt.Sprintf("%s_%d", filter.key, bucketIdx), int64(idx2), 1)
+		pipe.SetBit(ctx, BucketNameFrom(filter.key, bucketIdx), int64(idx2), 1)
 	}
 	_, err := pipe.Exec(ctx)
 	return err
@@ -80,4 +80,8 @@ func (filter *redisBloomFilter) MightContainCtx(ctx context.Context, b []byte) (
 
 func (filter *redisBloomFilter) BucketCount() uint64 {
 	return filter.bucketCount
+}
+
+func BucketNameFrom(key string, index uint64) string {
+	return fmt.Sprintf("%s_%d", key, index)
 }

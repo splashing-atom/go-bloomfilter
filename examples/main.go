@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
 	bloomfilter "github.com/alovn/go-bloomfilter"
@@ -27,9 +28,10 @@ func RedisBloomFilterExample() {
 		DB:       0,
 	})
 	key := "redis bloomfilter"
+	ctx := context.Background()
 	bloom := bloomfilter.NewRedisBloomFilter(cli, "test", 10000)
 	bs := []byte(key)
-	_ = bloom.Put(bs)
-	exists, err := bloom.MightContain(bs)
+	_ = bloom.PutCtx(ctx, bs)
+	exists, err := bloom.MightContainCtx(ctx, bs)
 	fmt.Println(exists, err)
 }

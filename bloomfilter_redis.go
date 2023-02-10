@@ -15,7 +15,7 @@ type redisBloomFilter struct {
 	hashFuncs    []func([]byte) uint64
 }
 
-func NewRedisBloomFilter(redisCli *redis.Client, redisKey string, size uint64) BloomFilter {
+func NewRedisBloomFilter(redisCli *redis.Client, redisKey string, size uint64) RedisBackedBloomFilter {
 	if redisKey == "" {
 		redisKey = fmt.Sprintf("_bloomfilter_%d", size)
 	}
@@ -34,8 +34,11 @@ func NewRedisBloomFilter(redisCli *redis.Client, redisKey string, size uint64) B
 }
 
 func (filter *redisBloomFilter) Put(b []byte) error {
+	return filter.PutCtx(context.Background(), b)
+}
+
+func (filter *redisBloomFilter) PutCtx(ctx context.Context, b []byte) error {
 	pipe := filter.client.Pipeline()
-	ctx := context.TODO()
 	for _, f := range filter.hashFuncs {
 		val := f(b)
 		bucketIdx := val % filter.bucketCount //array index
@@ -45,9 +48,13 @@ func (filter *redisBloomFilter) Put(b []byte) error {
 	_, err := pipe.Exec(ctx)
 	return err
 }
+
 func (filter *redisBloomFilter) MightContain(b []byte) (bool, error) {
+	return filter.MightContainCtx(context.Background(), b)
+}
+
+func (filter *redisBloomFilter) MightContainCtx(ctx context.Context, b []byte) (bool, error) {
 	pipe := filter.client.Pipeline()
-	ctx := context.TODO()
 	var results []*redis.IntCmd
 	for _, f := range filter.hashFuncs {
 		val := f(b)
@@ -69,4 +76,8 @@ func (filter *redisBloomFilter) MightContain(b []byte) (bool, error) {
 		}
 	}
 	return true, nil
+}
+
+func (filter *redisBloomFilter) BucketCount() uint64 {
+	return filter.bucketCount
 }

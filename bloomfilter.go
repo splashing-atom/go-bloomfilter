@@ -17,6 +17,7 @@ type RedisBackedBloomFilter interface {
 	PutCtx(context.Context, []byte) error
 	MightContainCtx(context.Context, []byte) (bool, error)
 	BucketCount() uint64
+	BucketName(index uint64) string
 }
 
 //hash

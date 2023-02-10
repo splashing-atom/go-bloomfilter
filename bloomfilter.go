@@ -1,6 +1,7 @@
 package bloomfilter
 
 import (
+	"context"
 	"hash/crc32"
 	"hash/fnv"
 )
@@ -9,6 +10,13 @@ import (
 type BloomFilter interface {
 	Put([]byte) error
 	MightContain([]byte) (bool, error)
+}
+
+type RedisBackedBloomFilter interface {
+	BloomFilter
+	PutCtx(context.Context, []byte) error
+	MightContainCtx(context.Context, []byte) (bool, error)
+	BucketCount() uint64
 }
 
 //hash
